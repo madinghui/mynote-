@@ -1,5 +1,5 @@
 ---
-title: file伪协议 
+title: php伪协议 
 tags: php学习
 renderNumberedHeading: true
 grammar_cjkRuby: true
@@ -23,3 +23,85 @@ grammar_cjkRuby: true
 ### file://协议
 file://用于访问本地的文件系统，通常用来读取本地文件而不受**allow_url_fopen**与**allow_url_include**的控制。
 
+### php://协议
+==php:filter #E91E63==在双off的情况下也可以使用：
+**不需要开启allow_url_fopen，仅php://input、 php://stdin、 php://memory 和 php://temp 需要开启allow_url_include**
+php://访问各个输入和输出流，经常使用的是php://filter和php://input ,php://filter用来读取源码，php://input 用来执行代码。
+### php://filter
+==php://filter #E91E63== 是一种元封装器， 设计用于数据流打开时的筛选过滤应用。 这对于一体式（all-in-one）的文件函数非常有用，类似 readfile()、 file() 和 file_get_contents()， 在数据流内容读取之前没有机会应用其他过滤器。
+
+ 
+
+``` nix
+1. resource=<要过滤的数据流>     这个参数是必须的。它指定了你要筛选过滤的数据流。
+ 2. read=<读链的筛选列表>         该参数可选。可以设定一个或多个过滤器名称，以管道符（|）分隔。
+ 3. write=<写链的筛选列表>    该参数可选。可以设定一个或多个过滤器名称，以管道符（|）分隔。
+ 4. <；两个链的筛选列表>        任何没有以 read= 或 write= 作前缀 的筛选器列表会视情况应用于读或写链。
+可以运用多种过滤器（字符串，转换，压缩，加密）
+```
+
+``` maxima
+php://filter/read=convert.base64-encode/resource=upload.php
+这里读的过滤器为convert.base64-encode，就和字面上的意思一样，把输入流base64-encode。
+resource=upload.php，代表读取upload.php的内容
+```
+### 过滤器
+过滤器有很多种，字符串过滤器，转换过滤器，压缩过滤器，加密过滤器
+**字符串过滤器：**
+
+``` stylus
+string.rot13
+进行rot13转换
+string.toupper
+将字符全部大写
+string.tolower
+将字符全部小写
+string.strip_tags
+去除空字符、HTML 和 PHP 标记后的结果。
+功能类似于strip_tags()函数，若不想某些字符不被消除，后面跟上字符，可利用字符串或是数组两种方式。
+```
+
+``` php
+<?php
+    $fp = fopen('php://output', 'w');
+    stream_filter_append($fp, 'string.rot13');
+    echo "rot13:";
+    fwrite($fp, "This is a test.\n");
+    fclose($fp);
+    echo "<br>";
+
+    $fp = fopen('php://output', 'w');
+    stream_filter_append($fp, 'string.toupper');
+    echo "Upper:";
+    fwrite($fp, "This is a test.\n");
+    fclose($fp);
+    echo "<br>";
+
+    $fp = fopen('php://output', 'w');
+    stream_filter_append($fp, 'string.tolower');
+    echo "Lower:";
+    fwrite($fp, "This is a test.\n");
+    fclose($fp);
+    echo "<br>";
+
+    $fp = fopen('php://output', 'w');
+    echo "Del1:";
+    stream_filter_append($fp, 'string.strip_tags', STREAM_FILTER_WRITE);
+    fwrite($fp, "<b>This is a test.</b>!!!!<h1>~~~~</h1>\n");
+    fclose($fp);
+    echo "<br>";
+
+    $fp = fopen('php://output', 'w');
+    echo "Del2:";
+    stream_filter_append($fp, 'string.strip_tags', STREAM_FILTER_WRITE, "<b>");
+    fwrite($fp, "<b>This is a test.</b>!!!!<h1>~~~~</h1>\n");
+    fclose($fp);
+    echo "<br>";
+
+    $fp = fopen('php://output', 'w');
+    stream_filter_append($fp, 'string.strip_tags', STREAM_FILTER_WRITE, array('b','h1'));
+    echo "Del3:";
+    fwrite($fp, "<b>This is a test.</b>!!!!<h1>~~~~</h1>\n");
+    fclose($fp);
+?>
+```
