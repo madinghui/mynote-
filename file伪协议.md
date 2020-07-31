@@ -105,3 +105,55 @@ string.strip_tags
     fclose($fp);
 ?>
 ```
+<转换过滤器>
+![转换](https://githubimg/小书匠/1596209773827.png)
+
+``` php
+<?php
+    $fp = fopen('php://output', 'w');
+    stream_filter_append($fp, 'convert.base64-encode');
+    echo "base64-encode:";
+    fwrite($fp, "This is a test.\n");
+    fclose($fp);
+    echo "<br>";
+
+    $param = array('line-length' => 8, 'line-break-chars' => "\n");
+    $fp = fopen('php://output', 'w');
+    stream_filter_append($fp, 'convert.base64-encode', STREAM_FILTER_WRITE, $param);
+    echo "\nbase64-encode-split:\n";
+    fwrite($fp, "This is a test.\n");
+    fclose($fp);
+    echo "<br>";
+
+    $fp = fopen('php://output', 'w');
+    stream_filter_append($fp, 'convert.base64-decode');
+    echo "\nbase64-decode:";
+    fwrite($fp, "VGhpcyBpcyBhIHRlc3QuCg==\n");
+    fclose($fp);
+    echo "<br>";
+
+    $fp = fopen('php://output', 'w');
+    stream_filter_append($fp, 'convert.quoted-printable-encode');
+    echo "quoted-printable-encode:";
+    fwrite($fp, "This is a test.\n");
+    fclose($fp);
+    echo "<br>";
+
+    $fp = fopen('php://output', 'w');
+    stream_filter_append($fp, 'convert.quoted-printable-decode');
+    echo "\nquoted-printable-decode:";
+    fwrite($fp, "This is a test.=0A");
+    fclose($fp);
+    echo "<br>";
+
+?>
+```
+PHP file_put_contents() 函数：
+payload=http://127.0.0.1/xxx.php?a=php://filter/write=string.tolower/resource=test.php
+可以往服务器中写入一个文件内容全为小写且文件名为test.php的文件
+
+PHP file_get_contents() 函数
+file_get_contents()的$filename参数不仅仅为文件路径，还可以是一个URL（伪协议）。
+payload=http://127.0.0.1/xxx.php?a=php://filter/convert.base64-encode/resource=test.php
+test.php的内容以base64编码的方式显示出来
+
