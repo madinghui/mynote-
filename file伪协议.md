@@ -157,3 +157,26 @@ file_get_contents()的$filename参数不仅仅为文件路径，还可以是一�
 payload=http://127.0.0.1/xxx.php?a=php://filter/convert.base64-encode/resource=test.php
 test.php的内容以base64编码的方式显示出来
 
+双引号包含的变量$filename会被当作正常变量执行，而单引号包含的变量则会被当作字符串执行。
+
+``` php
+<?php  
+$aa=1;
+echo "$aa";
+echo "<br>";
+echo '$aa';
+?>
+```
+## php://input
+**php://input 是个可以访问请求的原始数据的只读流,可以读取到post没有解析的原始数据, 将post请求中的数据作为PHP代码执行。因为它不依赖于特定的 php.ini 指令。
+注：enctype=”multipart/form-data” 的时候 php://input 是无效的。**
+
+## php://output
+是一个只写的数据流， 允许你以 print 和 echo 一样的方式 写入到输出缓冲区。
+
+``` php
+<?php  
+$code=$_GET["a"];  
+file_put_contents($code,"test");   
+?>  
+```
