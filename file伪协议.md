@@ -101,7 +101,7 @@ string.strip_tags
 ?>
 ```
 <转换过滤器>
-![转换](https://githubimg/小书匠/1596209773827.png)
+![转换](http://img/小书匠/1596209773827.png)
 
 ``` php
 <?php
@@ -227,4 +227,4 @@ zip:// [压缩文件绝对路径]#[压缩文件内的子文件名]**
 compress.bzip2://file.bz2
 相对路径也可以
 
-![enter description here](https://githubimg/小书匠/1596642287558.png)
+![enter description here](http://img/小书匠/1596642287558.png)
